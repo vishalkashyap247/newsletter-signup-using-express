@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const request =  require("request");
 const https =require("https");
@@ -9,6 +11,7 @@ app.use(express.urlencoded({extended:true}));
 // for static files 
 app.use(express.static("public"));
 
+// console.log("token", process.env.API_KEY);//checking
 
 app.get("/", function(req, res)
 {
@@ -21,7 +24,7 @@ app.post("/", function(req, res)
     const firstName = req.body.fName;
     const lastName = req.body.lName;
     const email = req.body.email;
-    console.log(firstName, lastName, email);
+    // console.log(firstName, lastName, email);
 
     const data = {
         members: [
@@ -38,12 +41,11 @@ app.post("/", function(req, res)
 
     const jsonData = JSON.stringify(data);
 
-    // const url = "https://usX.api.mailchimp.com/3.0/lists/{list-id}";
-    const url = "https://us21.api.mailchimp.com/3.0/lists/43c6d54e14";
+    const url = "https://us"+process.env.SERVER_NUMBER+".api.mailchimp.com/3.0/lists/"+process.env.LIST_ID;
 
     const options = {
         method: "POST",
-        auth: "vishal1:50f794fd6fe644f34f15f56cbb18260f-us21"
+        auth: "vishal1:"+process.env.API_KEY
     }
 
     const request = https.request(url, options, function(response){
@@ -58,7 +60,7 @@ app.post("/", function(req, res)
 
         response.on("data", function(data)
         {
-            console.log(JSON.parse(data));
+            // console.log(JSON.parse(data));
             // var errorCnt = JSON.parse(data);
             // if(errorCnt.error_count!=0) //my code
             // {
@@ -78,13 +80,7 @@ app.post("/failure", function(req, res)
 });
 
 
-app.listen(process.env.PORT || 3000, function()//.....(for heroku || for localhost,....
+app.listen(process.env.PORT || 3000, function()
 {
-    console.log("server started on port 3000");
+    console.log("server started!");
 });
-
-// api Key
-// 50f794fd6fe644f34f15f56cbb18260f-us21
-
-// list id 
-// 43c6d54e14
